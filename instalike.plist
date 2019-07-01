@@ -1,0 +1,27 @@
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>KeepAlive</key>
+        <dict>
+            <key>SuccessfulExit</key>
+            <false/>
+        </dict>
+        <key>Label</key>
+        <string>protocol</string>
+        <key>ProgramArguments</key>
+    <array>
+        <string>/Users/username/.nvm/versions/node/v8.16.0/bin/node</string>
+        <string>/Users/username/path/to/instalike/index.js</string>
+        <string>--username</string>
+        <string>"TheUserName"</string>
+        <string>--password</string>
+        <string>"The password"</string>
+        <string>--target</string>
+        <string>"TargetsUsername"</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/username/log/instalike.log</string>
+</dict>
+</plist>
