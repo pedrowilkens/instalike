@@ -11,3 +11,6 @@ npm start -- --username user1 --password pass --target userToLikeTheImagesOf --s
 ```
 
 The Script runs till it finds an already liked image. For now..
+
+If you are on MacOs and you want this script run on every start.. adjust the plist file
+and put it in /Library/LaunchAgents/instalike.plist the owner of it must be root.
