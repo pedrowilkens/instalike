@@ -1,25 +1,30 @@
 const puppeteer = require('puppeteer');
-const commander = require('commander');
+const program = require('commander');
 
-commander
+program
   .version('1.0.0', '-v, --version')
   .usage('[OPTIONS]...')
-  .option('-u, --username <username>', 'Your Instagram Username')
-  .option('-p, --password <password>', 'Your Instagram password')
-  .option('-t, --target <target>', 'The User you want to like all images of')
-  .option('-s, --speed <speed>', 'The User you want to like all images of')
+  .option('-u, --username <username>', 'Your Instagram Username (required)')
+  .option('-p, --password <password>', 'Your Instagram password (required)')
+  .option('-t, --target <target>', 'The User you want to like all images of (required)')
+  .option('-s, --speed <speed>', 'The Delay between interactions. The lower the faster (0 minimum) but be aware that instagrams ui may have problems with low delay', parseInt)
   .parse(process.argv);
 
 (async () => {
+  
+  const needHelp = (!program.username || !program.password || !program.target)
 
-  const username = commander.username;
-  const password = commander.password;
-  const target   = commander.target;
-  const speed    = commander.speed;
+  needHelp && program.outputHelp()
+  needHelp && process.exit(1)
+
+  const username = program.username 
+  const password = program.password
+  const target   = program.target
+  const speed    = program.speed !== undefined ? program.speed : 40;
 
 
   const browser = await puppeteer.launch({
-    slowMo: parseInt(speed, 10),
+    slowMo: speed,
     headless: false
   });
 
@@ -40,23 +45,25 @@ commander
   };
 
   const page = await browser.newPage();
-  await page.goto(pages['loginPage']);
+  await page.goto( pages['loginPage'] );
 
-  const userInput = await page.waitForSelector(elements['userInput']);
-  const passInput = await page.waitForSelector(elements['passInput']);
+  const userInput = await page.waitForSelector( elements['userInput'] );
+  const passInput = await page.waitForSelector( elements['passInput'] );
   
   await userInput.type(username);
-  await passInput.type(password);
+  await passInput.type(password); 
 
-  const [response] = await Promise.all([
+ await Promise.all([
     page.waitForNavigation(),
-    page.click(elements['login_button'])
-  ]);
+    page.click( elements['login_button'] )
+  ]).then(() => {
+    console.info('Logged In')
+  })
 
-  await page.goto(pages['targetsPage']);
+  await page.goto( pages['targetsPage'] );
   await page.waitFor(1000);
 
-  let pictures = await page.$$(elements['pictures'])
+  let pictures = await page.$$( elements['pictures'] );
   let i = 0
   let red_heart
 
@@ -64,9 +71,9 @@ commander
 
     for (; i < pictures.length; i++) {
       await pictures[i].click();
-      const popup = await page.waitForSelector(elements['popup']);
-      const heart = await popup.$(elements['heart'])
-      red_heart = await popup.$(elements['red_heart'])
+      const popup = await page.waitForSelector( elements['popup'] );
+      const heart = await popup.$( elements['heart'] )
+      red_heart = await popup.$( elements['red_heart'] )
 
       if (heart) {
         await heart.click()
@@ -81,11 +88,12 @@ commander
       break
     }
 
-    pictures = await page.$$(elements['pictures'])
+    // get all pictures also the lazy loaded once. 
+    pictures = await page.$$( elements['pictures'] )
   }
 
   await browser.close();
 
 })().catch((err) => {
-    console.log(err)
+    console.error(err)
 })
