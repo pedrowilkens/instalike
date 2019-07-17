@@ -22,7 +22,6 @@ program
   const target   = program.target
   const speed    = program.speed !== undefined ? program.speed : 40;
 
-
   const browser = await puppeteer.launch({
     slowMo: speed,
     headless: false
@@ -88,7 +87,7 @@ program
       break
     }
 
-    // get all pictures also the lazy loaded once. 
+    // get all pictures also the lazy loaded ones. 
     pictures = await page.$$( elements['pictures'] )
   }
 
