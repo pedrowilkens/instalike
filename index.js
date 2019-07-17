@@ -8,6 +8,7 @@ program
   .option('-p, --password <password>', 'Your Instagram password (required)')
   .option('-t, --target <target>', 'The User you want to like all images of (required)')
   .option('-s, --speed <speed>', 'The Delay between interactions. The lower the faster (0 minimum) but be aware that instagrams ui may have problems with low delay', parseInt)
+  .option('-h, --headless', 'Start in headless mode')
   .parse(process.argv);
 
 (async () => {
@@ -21,10 +22,11 @@ program
   const password = program.password
   const target   = program.target
   const speed    = program.speed !== undefined ? program.speed : 40;
+  const headless = !!program.headless
 
   const browser = await puppeteer.launch({
     slowMo: speed,
-    headless: false
+    headless: headless
   });
 
   const elements = {
